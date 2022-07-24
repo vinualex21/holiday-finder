@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace HolidayFinder
 {
-    public class HolidayManager
+    public class HolidayManager : IHolidayManager
     {
-        private const int DEFAULT_DURATION = 7;
         private IReader _fileReader;
+
+        private const int DEFAULT_DURATION = 7;
         string flightFilePath = $"{Environment.CurrentDirectory}\\InputData\\FlightData.json";
         string hotelFilePath = $"{Environment.CurrentDirectory}\\InputData\\HotelData.json";
         string airportFilePath = $"{Environment.CurrentDirectory}\\InputData\\AirportData.json";
@@ -25,10 +26,13 @@ namespace HolidayFinder
                                 string departingFrom = null, 
                                 string travellingTo = null, 
                                 string departureDate = null, 
-                                int duration = DEFAULT_DURATION)
+                                int duration = 0)
         {
             var flights = _fileReader.ReadFile<Flight>(flightFilePath);
             var hotels = _fileReader.ReadFile<Hotel>(hotelFilePath);
+
+            if(duration == 0)
+                duration = DEFAULT_DURATION;
 
             var query = from flight in flights
                         join hotel in hotels

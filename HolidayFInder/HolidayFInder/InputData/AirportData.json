@@ -1,0 +1,44 @@
+[
+	{
+		"code": "MAN",
+		"name": "Manchester",
+		"city": "Manchester",
+		"country": "United Kingdom"
+	},
+	{
+		"code": "TFS",
+		"name": "Tenerife",
+		"city": "Canary Islands",
+		"country": "Spain"
+	},
+	{
+		"code": "AGP",
+		"name": "Malaga-Costa del Sol",
+		"city": "Malaga",
+		"country": "Spain"
+	},
+	{
+		"code": "PMI",
+		"name": "Palma de Mallorca",
+		"city": "Mallorca",
+		"country": "Spain"
+	},
+	{
+		"code": "LTN",
+		"name": "London Luton",
+		"city": "London",
+		"country": "United Kingdom"
+	},
+	{
+		"code": "LGW",
+		"name": "London Gatwick",
+		"city": "London",
+		"country": "United Kingdom"
+	},
+	{
+		"code": "LPA",
+		"name": "Gran Canaria",
+		"city": "Canary Islands",
+		"country": "Spain"
+	}
+]
