@@ -32,8 +32,10 @@ namespace HolidayFinderTests
             //Arrange
             var flightData = GetFlightData();
             var hotelData = GetHotelData();
+            var airportData = GetAirportData();
             _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
             _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
 
             //Act
             var result = _holidayManager.SearchHoliday(departingFrom: "TFS", travellingTo: "AGP",
@@ -49,8 +51,10 @@ namespace HolidayFinderTests
             //Arrange
             var flightData = GetFlightData();
             var hotelData = GetHotelData();
-            _fileReader.Setup(x=>x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
-            _fileReader.Setup(x=>x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            var airportData = GetAirportData();
+            _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
+            _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
 
             //Act
             var holidays = _holidayManager.SearchHoliday(departingFrom: "MAN",  travellingTo: "AGP", 
@@ -67,8 +71,10 @@ namespace HolidayFinderTests
             //Arrange
             var flightData = GetFlightData();
             var hotelData = GetHotelData();
+            var airportData = GetAirportData();
             _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
             _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
 
             //Act
             var holidays = _holidayManager.SearchHoliday(travellingTo: "LPA",
@@ -79,7 +85,48 @@ namespace HolidayFinderTests
             holidays.Results.First().Hotel.Id.Should().Be(6);
         }
 
-        #region Data Setup
+        [Test]
+        public void Given_AnyLondonAirport_To_PMI_On_15_06_2023_For10Nights_ShouldReturnFlight6Hotel5()
+        {
+            //Arrange
+            var flightData = GetFlightData();
+            var hotelData = GetHotelData();
+            var airportData = GetAirportData();
+            _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
+            _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
+
+            //Act
+            var holidays = _holidayManager.SearchHoliday(departingFrom: "London", travellingTo: "PMI",
+                                                        departureDate: "2023/06/15", duration: 10);
+
+            //Assert
+            holidays.Results.First().Flight.Id.Should().Be(6);
+            holidays.Results.First().Hotel.Id.Should().Be(5);
+        }
+
+        [Test]
+        public void Given_MAN_To_AnySpainAirport_On_15_06_2023_For10Nights_ShouldReturnHolidaysInSpain()
+        {
+            //Arrange
+            var flightData = GetFlightData();
+            var hotelData = GetHotelData();
+            var airportData = GetAirportData();
+            _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
+            _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
+            var spainAirports = new List<string>() { "TFS","AGP","PMI","LPA"};
+
+            //Act
+            var holidays = _holidayManager.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "2023/06/15", duration: 10);
+
+            //Assert
+            holidays.Results.Any().Should().BeTrue();
+            holidays.Results.All(h => spainAirports.Contains(h.Flight.To));
+        }
+
+        #region Test Data Setup
 
         private List<Flight> GetFlightData()
         {
@@ -101,6 +148,17 @@ namespace HolidayFinderTests
                 DateFormatString = "yyyy-MM-dd"
             };
             return JsonConvert.DeserializeObject<List<Hotel>>(JsonTxt, settings);
+        }
+
+        private List<Airport> GetAirportData()
+        {
+            string filePath = $"{Environment.CurrentDirectory}\\InputTestData\\AirportData.json";
+            var JsonTxt = File.ReadAllText(filePath);
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                DateFormatString = "yyyy-MM-dd"
+            };
+            return JsonConvert.DeserializeObject<List<Airport>>(JsonTxt, settings);
         }
 
         #endregion

@@ -102,5 +102,13 @@
 		"price_per_night": 295,
 		"local_airports": [ "PMI" ],
 		"nights": 10
+	},
+	{
+		"id": 14,
+		"name": "Grand Hyatt Kochi Bolgatty",
+		"arrival_date": "2023-06-15",
+		"price_per_night": 170,
+		"local_airports": [ "COK" ],
+		"nights": 10
 	}
 ]
