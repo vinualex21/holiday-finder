@@ -57,7 +57,7 @@ namespace HolidayFinder
                 if (DateTime.TryParse(departureDate, out DateTime depDate))
                     query = query.Where(x => x.Flight.DepartureDate == depDate);
                 else
-                    throw new FormatException("Invalid departure date. Please enter in the format yyyy/mm/dd");
+                    throw new FormatException("Invalid departure date. Please enter in the format dd/mm/yyyy or yyyy/mm/dd");
             }
 
             query = query.Where(x => x.Hotel.NumberOfNights == duration);

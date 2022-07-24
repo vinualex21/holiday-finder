@@ -126,6 +126,52 @@ namespace HolidayFinderTests
             holidays.Results.All(h => spainAirports.Contains(h.Flight.To));
         }
 
+        [Test]
+        public void GivenValidDateFormat_ShouldNotThrowException()
+        {
+            //Arrange
+            var flightData = GetFlightData();
+            var hotelData = GetHotelData();
+            var airportData = GetAirportData();
+            _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
+            _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
+
+            //Assert
+            _holidayManager.Invoking(y => y.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "15/06/2023", duration: 10))
+                            .Should().NotThrow<Exception>();
+
+            _holidayManager.Invoking(y => y.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "2023/06/15", duration: 10))
+                            .Should().NotThrow<Exception>();
+
+            _holidayManager.Invoking(y => y.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "2023-06-15", duration: 10))
+                            .Should().NotThrow<Exception>();
+        }
+
+        [Test]
+        public void GivenInvalidDateFormat_ShouldThrowFormatException()
+        {
+            //Arrange
+            var flightData = GetFlightData();
+            var hotelData = GetHotelData();
+            var airportData = GetAirportData();
+            _fileReader.Setup(x => x.ReadFile<Flight>(It.IsAny<string>())).Returns(flightData);
+            _fileReader.Setup(x => x.ReadFile<Hotel>(It.IsAny<string>())).Returns(hotelData);
+            _fileReader.Setup(x => x.ReadFile<Airport>(It.IsAny<string>())).Returns(airportData);
+
+            //Assert
+            _holidayManager.Invoking(y => y.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "06/15/2023", duration: 10))
+                            .Should().Throw<FormatException>();
+
+            _holidayManager.Invoking(y => y.SearchHoliday(departingFrom: "MAN", travellingTo: "Spain",
+                                                        departureDate: "2023/15/06", duration: 10))
+                            .Should().Throw<FormatException>();
+        }
+
         #region Test Data Setup
 
         private List<Flight> GetFlightData()
