@@ -22,7 +22,7 @@ namespace HolidayFinder.FileReader
                 var JsonTxt = File.ReadAllText(filePath);
                 JsonSerializerSettings settings = new JsonSerializerSettings()
                 {
-                    DateFormatString = "yyyy-MM-dd"
+                    DateFormatString = Constants.JSON_DATE_FORMAT
                 };
                 result = JsonConvert.DeserializeObject<List<T>>(JsonTxt, settings);
             }

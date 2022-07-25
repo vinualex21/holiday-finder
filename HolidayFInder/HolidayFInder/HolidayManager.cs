@@ -12,10 +12,9 @@ namespace HolidayFinder
     {
         private IReader _fileReader;
 
-        private const int DEFAULT_DURATION = 7;
-        string flightFilePath = $"{Environment.CurrentDirectory}\\InputData\\FlightData.json";
-        string hotelFilePath = $"{Environment.CurrentDirectory}\\InputData\\HotelData.json";
-        string airportFilePath = $"{Environment.CurrentDirectory}\\InputData\\AirportData.json";
+        string flightFilePath = $"{Environment.CurrentDirectory}{Constants.FLIGHT_FILE_PATH}";
+        string hotelFilePath = $"{Environment.CurrentDirectory}{Constants.HOTEL_FILE_PATH}";
+        string airportFilePath = $"{Environment.CurrentDirectory}{Constants.AIRPORT_FILE_PATH}";
 
         public HolidayManager(IReader fileReader)
         {
@@ -32,7 +31,7 @@ namespace HolidayFinder
             var hotels = _fileReader.ReadFile<Hotel>(hotelFilePath);
 
             if(duration == 0)
-                duration = DEFAULT_DURATION;
+                duration = Constants.DEFAULT_HOTEL_STAY_DURATION;
 
             var query = from flight in flights
                         join hotel in hotels
