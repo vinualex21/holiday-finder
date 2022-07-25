@@ -21,6 +21,15 @@ namespace HolidayFinder
             _fileReader = fileReader;
         }
 
+        /// <summary>
+        /// Gets holidays based on input parameters
+        /// </summary>
+        /// <param name="departingFrom">Airport code/ City/ Country</param>
+        /// <param name="travellingTo">Airport code/ City/ Country</param>
+        /// <param name="departureDate">In the format yyyy/mm/dd</param>
+        /// <param name="duration">Defaut value is 7</param>
+        /// <returns>Holidays sorted in increasing order of total cost</returns>
+        /// <exception cref="FormatException"></exception>
         public HolidaySearchResult SearchHoliday(
                                 string departingFrom = null, 
                                 string travellingTo = null, 
@@ -29,8 +38,9 @@ namespace HolidayFinder
         {
             var flights = _fileReader.ReadFile<Flight>(flightFilePath);
             var hotels = _fileReader.ReadFile<Hotel>(hotelFilePath);
+            var airports = _fileReader.ReadFile<Airport>(airportFilePath);
 
-            if(duration == 0)
+            if (duration == 0)
                 duration = Constants.DEFAULT_HOTEL_STAY_DURATION;
 
             var query = from flight in flights
@@ -45,13 +55,13 @@ namespace HolidayFinder
 
             if (departingFrom != null)
             {
-                var departureAirports = GetAirportCodes(departingFrom);
+                var departureAirports = GetAirportCodes(departingFrom, airports);
                 query = query.Where(x => departureAirports.Contains(x.Flight.From));
             }
 
             if (travellingTo != null)
             {
-                var arrivalAirports = GetAirportCodes(travellingTo);
+                var arrivalAirports = GetAirportCodes(travellingTo, airports);
                 query = query.Where(x => arrivalAirports.Contains(x.Flight.To));
             }
 
@@ -78,9 +88,14 @@ namespace HolidayFinder
             return new HolidaySearchResult() { Results = holidays };
         }
 
-        private List<string> GetAirportCodes(string searchInput)
+        /// <summary>
+        /// Retrieves airport codes for a given airport name, city, or country
+        /// </summary>
+        /// <param name="searchInput">airport name, city, or country</param>
+        /// <param name="airports">List of airport data</param>
+        /// <returns>Airport codes that match the input</returns>
+        private List<string> GetAirportCodes(string searchInput, List<Airport> airports)
         {
-            var airports = _fileReader.ReadFile<Airport>(airportFilePath);
             IEnumerable<Airport> airportMatch = null;
             airportMatch = airports.Where(a => a.Code == searchInput);
             if (airportMatch?.Count() == 0)
